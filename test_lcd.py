@@ -6,9 +6,9 @@ import time
 
 
 buzzer = 4
-ledRed = 16
-ledGreen = 20
-relay = 21
+ledRed = 23
+ledGreen = 24
+relay = 18
 lcd = LCD()
 t = 1 #delay
 
@@ -21,8 +21,8 @@ GPIO.setup(relay, GPIO.OUT)
 
 
 try:
-	while True:
-		lcd.text("relay aktif", 1)
+	while True:       ################  LCD characters
+		lcd.text("buka kunci", 1)
 		lcd.text("0", 2)
 		GPIO.output(buzzer, 1)
 		GPIO.output(ledRed, 0)
@@ -31,8 +31,8 @@ try:
 		time.sleep(t)
 		lcd.clear()
 
-		lcd.text("relay non aktif", 1)
-		lcd.text("1", 2)
+		lcd.text("     kunci tutup", 1)
+		lcd.text("               1", 2)
 		GPIO.output(buzzer, 0)
 		GPIO.output(ledRed, 1)
 		GPIO.output(ledGreen, 0)
@@ -41,8 +41,8 @@ try:
 		lcd.clear()
 
 except KeyboardInterrupt:
-	GPIO.cleanup()
 	lcd.clear()
+	GPIO.cleanup()
 	pass
 
 
