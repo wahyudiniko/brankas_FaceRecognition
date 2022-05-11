@@ -13,7 +13,7 @@ MATRIX = [ [1, 2, 3, "A"],
 ROW = [5, 6, 13, 19]
 COL = [16, 20, 21, 12]
 
-lcd.text("NOMOR KEYPAD: ",1)
+lcd.text("NOMOR DITEKAN: ",1)
 
 for j in range(4):
 	GPIO.setup(COL[j], GPIO.OUT)
@@ -22,6 +22,7 @@ for j in range(4):
 for i in range(4):
 	GPIO.setup(ROW[i], GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
+# ISI 
 try:
 	while True:
 		for j in range(4):
