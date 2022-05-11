@@ -3,17 +3,19 @@
 import RPi.GPIO as GPIO
 from rpi_lcd import LCD
 import time
+import os
+
 
 lcd = LCD()
 
-L1 = 16 
-L2 = 20
-L3 = 21
-L4 = 5
-C1 = 6
-C2 = 13
-C3 = 19
-C4 = 26
+L1 = 5 
+L2 = 6
+L3 = 13
+L4 = 19
+C1 = 16
+C2 = 20
+C3 = 21
+C4 = 12
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
@@ -30,13 +32,14 @@ GPIO.setup(C4, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 def readLine(line, characters):
     GPIO.output(line, GPIO.HIGH)
     if(GPIO.input(C1) == 1):
-        lcd.text(ord(characters[0]))
+        os.system("clear")
+        print(ord(characters[0]))
     if(GPIO.input(C2) == 1):
-        lcd.text(ord(characters[1]))
+        print(ord(characters[1]))
     if(GPIO.input(C3) == 1):
-        lcd.text(ord(characters[2]))
+        print(ord(characters[2]))
     if(GPIO.input(C4) == 1):
-        lcd.text(ord(characters[3]))
+        print(ord(characters[3]))
     GPIO.output(line, GPIO.LOW)
 
 try:
