@@ -98,6 +98,9 @@ if __name__ == '__main__':
     digit = None
     while digit == None:
         digit = kp.getKey()
-
+        pass
     # Print the result
-    print(digit)
+    if GPIO.input(ROW[j]) == 0:
+        print(digit)
+        while(GPIO.input(ROW[j])) == 0:
+        	pass
