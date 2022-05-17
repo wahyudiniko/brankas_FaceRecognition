@@ -16,7 +16,6 @@ GPIO.setup(ledRed, GPIO.OUT)
 GPIO.setup(ledGreen, GPIO.OUT)
 
 
-
 MATRIX = [ [1, 2, 3, "A"],
 	   [4, 5, 6, "B"],
            [7, 8, 9, "C"],
@@ -25,19 +24,46 @@ MATRIX = [ [1, 2, 3, "A"],
 ROW = [5, 6, 13, 19]
 COL = [16, 20, 21, 12]
 
-password = "123546"
+password = "123546D"
 passEnter = ""
+
+
+GPIO.output(ledGreen, 0)
+GPIO.output(ledRed, 0)
 
 lcd.text("MASUKKAN PIN: ",1)
 
 def benar():
 	lcd.text("     KUNCI", 1)
 	lcd.text("    TERBUKA   ", 2)
-	GPIO.output(, )
-	GPIO.output(, )
+	GPIO.output(relay, 0)
+	GPIO.output(ledGreen, 1)
+	GPIO.output(ledRed, 0)
+
+	GPIO.output(buzzer, 1)
+	time.sleep(0.1)
+	GPIO.output(buzzer, 0)
+	time.sleep(0.1)	
+	GPIO.output(buzzer, 1)
+	time.sleep(0.1)
+	GPIO.output(buzzer, 0)
+	time.sleep(0.1)
+	GPIO.output(buzzer, 1)
+	time.sleep(0.3)
+	GPIO.output(buzzer, 0)
+
 
 def salah():
-	
+	lcd.text("   PASSWORD", 1)
+	lcd.text("    SALAH   ", 2)
+	GPIO.output(relay, 1)
+	GPIO.output(ledGreen, 0)
+	GPIO.output(ledRed, 1)
+
+	GPIO.output(buzzer, 1)
+	time.sleep(1)
+	GPIO.output(buzzer, 0)
+
 
 
 for j in range(4):
@@ -63,13 +89,12 @@ try:
 						passEnter = ""
 					if MATRIX[i][j] == "D":
 						if passEnter == password:
-                                			
-						else:
-							lcd.text("     PIN", 1)
-							lcd.text("    SALAH!", 2)
-                                			lcd.clear()
-                                			GPIO.cleanup()
-                                			exit()
+							benar()
+							lcd.clear()
+							GPIO.cleanup()
+							exit()
+						if passEnter != password:
+							salah()
 
 					while(GPIO.input(ROW[i])) == 0:
 						pass
