@@ -24,7 +24,7 @@ MATRIX = [ [1, 2, 3, "A"],
 ROW = [5, 6, 13, 19]
 COL = [16, 20, 21, 12]
 
-password = "123546D"
+password = "1D"
 passEnter = ""
 
 
