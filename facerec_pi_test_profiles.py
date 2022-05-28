@@ -15,10 +15,20 @@ import os
 import time
 
 
+buzzer = 4
+ledRed = 23
+ledGreen = 24
+relay = 18
+lcd = LCD()
+count = 0 
+
 #GPIO
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(21, GPIO.OUT)
+GPIO.setup(buzzer, GPIO.OUT)
+GPIO.setup(ledRed, GPIO.OUT)
+GPIO.setup(ledGreen, GPIO.OUT)
+GPIO.setup(relay, GPIO.OUT)
 
 # Note: This script requires OpenCV (the `cv2` library) to be installed only to read from your webcam.
 # Visit smartbuids.io for more information
@@ -41,6 +51,22 @@ process_this_frame = True
 
 prev_frame_time = 0
 new_frame_time = 0
+
+def Dikenal():
+	GPIO.output(relay, 0)
+	GPIO.output(ledGreen, 1)
+	GPIO.output(ledRed, 0)
+
+
+def tDikenal():
+        GPIO.output(relay, 1)
+        GPIO.output(ledGreen, 0)
+        GPIO.output(ledRed, 1)
+
+        GPIO.output(buzzer, 1)
+        time.sleep(1)
+        GPIO.output(buzzer, 0)
+
 
 lcd.text("initializing...", 1)
 
@@ -91,22 +117,31 @@ while True:
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
         face_names = []
-        GPIO.output(21, 1)
+        GPIO.output(18, 1)
+        GPIO.output(ledGreen, 0)
+        GPIO.output(ledRed, 0)
+
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
+            count = count + 1
             #print(face_encoding)
             #print(matches)
+            
+            if count == 3:
+                tDikenal()
+                count = 0
 
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 name = known_person[best_match_index]
-                GPIO.output(21, 0)
-                time.sleep(3)
+                Dikenal()
+                count = 0
 
             print(name)
+            print(count)
             lcd.text(f"     {name}    ", 1)
             
             #print(face_locations)
