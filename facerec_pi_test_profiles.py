@@ -62,13 +62,14 @@ def tDikenal():
         GPIO.output(relay, 1)
         GPIO.output(ledGreen, 0)
         GPIO.output(ledRed, 1)
-
         GPIO.output(buzzer, 1)
         time.sleep(1)
         GPIO.output(buzzer, 0)
 
 
 lcd.text("initializing...", 1)
+GPIO.output(ledGreen, 1)
+GPIO.output(ledRed, 1)
 
 #Loop to add images in friends folder
 for file in os.listdir("src/profiles"):
@@ -120,7 +121,8 @@ while True:
         GPIO.output(18, 1)
         GPIO.output(ledGreen, 0)
         GPIO.output(ledRed, 0)
-
+        lcd.text("",1)
+        
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
