@@ -56,7 +56,7 @@ def Dikenal():
 	GPIO.output(relay, 0)
 	GPIO.output(ledGreen, 1)
 	GPIO.output(ledRed, 0)
-
+	#time.sleep(3)
 
 def tDikenal():
         GPIO.output(relay, 1)
@@ -159,9 +159,6 @@ while True:
         right *= 4
         bottom *= 4
         left *= 4
-    
-
-
 
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), (255, 255, 255), 2)
