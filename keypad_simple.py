@@ -26,10 +26,11 @@ COL = [16, 20, 21, 12]
 
 password = "1D"
 passEnter = ""
-
+passStars = ""
 
 GPIO.output(ledGreen, 0)
 GPIO.output(ledRed, 0)
+GPIO.output(buzzer, 0)
 
 lcd.text("MASUKKAN PIN: ",1)
 
@@ -40,10 +41,10 @@ def benar():
 	GPIO.output(ledGreen, 1)
 	GPIO.output(ledRed, 0)
 
-	GPIO.output(buzzer, 1)
-	time.sleep(0.1)
-	GPIO.output(buzzer, 0)
-	time.sleep(0.1)	
+	#GPIO.output(buzzer, 1)
+	#time.sleep(0.1)
+	#GPIO.output(buzzer, 0)
+	#time.sleep(0.1)	
 	GPIO.output(buzzer, 1)
 	time.sleep(0.1)
 	GPIO.output(buzzer, 0)
@@ -84,21 +85,26 @@ try:
 				if GPIO.input(ROW[i]) == 0:
 					passEnter = passEnter + str(MATRIX[i][j])
 					print(MATRIX[i][j])
+					GPIO.output(buzzer, 1)
+					time.sleep(0.1)
+					GPIO.output(buzzer, 0)
+					passStars = passStars + "*"
 
 					if MATRIX[i][j] == "A":
 						passEnter = ""
+						passStars = ""
 					if MATRIX[i][j] == "D":
 						if passEnter == password:
 							benar()
-							lcd.clear()
-							GPIO.cleanup()
-							exit()
+							
 						if passEnter != password:
 							salah()
-
+						passEnter = ""
+						passStars = ""
+					lcd.text("MASUKKAN PIN:",1)
 					while(GPIO.input(ROW[i])) == 0:
 						pass
-			lcd.text(passEnter, 2)
+			lcd.text(passStars, 2)
 			
 			
 			GPIO.output(COL[j],1)
