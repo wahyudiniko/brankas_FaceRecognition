@@ -99,11 +99,19 @@ try:
 					if MATRIX[i][j] == "D":
 						
 						if passEnter == password:
-							benar()							
+							benar()
+							pause = True
+							while pause == True:
+								#if MATRIX[i][j] == "B":
+								if (GPIO.input(ROW[i])) == 0:
+									pause = False
+									break
+								pass
 						if passEnter != password:
 							salah()
 						passEnter = ""
 						passStars = ""
+					time.sleep(0.1)
 					lcd.text("MASUKKAN PIN:",1)
 					GPIO.output(ledGreen, 0)
 					GPIO.output(ledRed, 0)
@@ -111,8 +119,7 @@ try:
 					while(GPIO.input(ROW[i])) == 0:
 						pass
 			lcd.text(passStars, 2)
-			time.sleep(0.1)
-			
+			#time.sleep(0.1)
 			GPIO.output(COL[j],1)
 
 except KeyboardInterrupt:
