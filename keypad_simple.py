@@ -34,20 +34,17 @@ GPIO.output(ledGreen, 0)
 GPIO.output(ledRed, 0)
 GPIO.output(buzzer, 0)
 
+time.sleep(1)
 lcd.text("MASUKKAN PIN: ",1)
 
 def benar():
 	time.sleep(0.1)
-	lcd.text("     KUNCI", 1)
-	lcd.text("    TERBUKA   ", 2)
+	lcd.text("BRANKAS TERBUKA", 1)
+	lcd.text("",2)
 	GPIO.output(relay, 0)
 	GPIO.output(ledGreen, 1)
 	GPIO.output(ledRed, 0)
-
-	#GPIO.output(buzzer, 1)
-	#time.sleep(0.1)
-	#GPIO.output(buzzer, 0)
-	#time.sleep(0.1)	
+	
 	GPIO.output(buzzer, 1)
 	time.sleep(0.1)
 	GPIO.output(buzzer, 0)
@@ -55,6 +52,9 @@ def benar():
 	GPIO.output(buzzer, 1)
 	time.sleep(0.3)
 	GPIO.output(buzzer, 0)
+	
+	time.sleep(1)
+	lcd.text("'D' UNTUK KUNCI ", 2)
 
 
 def salah():
@@ -118,8 +118,8 @@ try:
 					GPIO.output(buzzer, 0)
 					while(GPIO.input(ROW[i])) == 0:
 						pass
+			time.sleep(0.01)
 			lcd.text(passStars, 2)
-			#time.sleep(0.1)
 			GPIO.output(COL[j],1)
 
 except KeyboardInterrupt:
