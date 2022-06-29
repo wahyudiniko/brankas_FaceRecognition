@@ -1,11 +1,13 @@
 import RPi.GPIO as GPIO
 from rpi_lcd import LCD
 import time
+import os
 
 buzzer = 4
 ledRed = 23
 ledGreen = 24
 relay = 18
+
 
 lcd = LCD()
 GPIO.setwarnings(False)
@@ -35,6 +37,7 @@ GPIO.output(buzzer, 0)
 lcd.text("MASUKKAN PIN: ",1)
 
 def benar():
+	time.sleep(0.1)
 	lcd.text("     KUNCI", 1)
 	lcd.text("    TERBUKA   ", 2)
 	GPIO.output(relay, 0)
@@ -94,18 +97,21 @@ try:
 						passEnter = ""
 						passStars = ""
 					if MATRIX[i][j] == "D":
+						
 						if passEnter == password:
-							benar()
-							
+							benar()							
 						if passEnter != password:
 							salah()
 						passEnter = ""
 						passStars = ""
 					lcd.text("MASUKKAN PIN:",1)
+					GPIO.output(ledGreen, 0)
+					GPIO.output(ledRed, 0)
+					GPIO.output(buzzer, 0)
 					while(GPIO.input(ROW[i])) == 0:
 						pass
 			lcd.text(passStars, 2)
-			
+			time.sleep(0.1)
 			
 			GPIO.output(COL[j],1)
 

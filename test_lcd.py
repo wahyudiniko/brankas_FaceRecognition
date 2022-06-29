@@ -10,7 +10,7 @@ ledRed = 23
 ledGreen = 24
 relay = 18
 lcd = LCD()
-t = 1 #delay
+t = 2 #delay
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
@@ -22,8 +22,8 @@ GPIO.setup(relay, GPIO.OUT)
 
 try:
 	while True:       ################  LCD characters
-		lcd.text("buka kunci", 1)
-		lcd.text("0", 2)
+		lcd.text("NIKO WAHYUDI", 1)
+		lcd.text("18101152620062", 2)
 		GPIO.output(buzzer, 1)
 		GPIO.output(ledRed, 0)
 		GPIO.output(ledGreen, 1)
