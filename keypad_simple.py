@@ -125,3 +125,4 @@ try:
 except KeyboardInterrupt:
 	lcd.clear()
 	GPIO.cleanup()
+

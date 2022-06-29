@@ -37,14 +37,6 @@ password = "1D"
 passEnter = ""
 passStars = ""
 
-GPIO.output(ledGreen, 0)
-GPIO.output(ledRed, 0)
-GPIO.output(buzzer, 0)
-
-lcd.text("MASUKKAN PIN: ",1)
-
-
-
 # Note: This script requires OpenCV (the `cv2` library) to be installed only to read from your webcam.
 # Visit smartbuids.io for more information
 
@@ -57,19 +49,16 @@ lcd = LCD()
 known_person=[] #Name of person string
 known_image=[] #Image object
 known_face_encodings=[] #Encoding object
-
-# Initialize some variables
+#Initialize some variables
 face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
 
-prev_frame_time = 0
-new_frame_time = 0
-
 def benar():
-        lcd.text("    BRANKAS", 1)
-        lcd.text("    TERBUKA   ", 2)
+        time.sleep(0.1)
+        lcd.text("BRANKAS TERBUKA", 1)
+        lcd.text("",2)
         GPIO.output(relay, 0)
         GPIO.output(ledGreen, 1)
         GPIO.output(ledRed, 0)
@@ -82,10 +71,24 @@ def benar():
         time.sleep(0.3)
         GPIO.output(buzzer, 0)
 
+        time.sleep(1)
+        lcd.text("'D' UNTUK KUNCI ", 2)
 
-def salah():
-        lcd.text("   PASSWORD", 1)
-        lcd.text("    SALAH   ", 2)
+
+def pinSalah():   ################
+        lcd.text("    PIN YANG", 1)
+        lcd.text("DIMASUKKAN SALAH", 2)
+        GPIO.output(relay, 1)
+        GPIO.output(ledGreen, 0)
+        GPIO.output(ledRed, 1)
+
+        GPIO.output(buzzer, 1)
+        time.sleep(1)
+        GPIO.output(buzzer, 0)
+
+def tDikenal():   ################
+        lcd.text("  WAJAH TIDAK", 1)
+        lcd.text("     SESUAI   ", 2)
         GPIO.output(relay, 1)
         GPIO.output(ledGreen, 0)
         GPIO.output(ledRed, 1)
@@ -99,6 +102,10 @@ lcd.text("initializing...", 1)
 GPIO.output(ledGreen, 1)
 GPIO.output(ledRed, 1)
 
+GPIO.output(ledGreen, 0)
+GPIO.output(ledRed, 0)
+GPIO.output(buzzer, 0)
+
 #Loop to add images in friends folder
 for file in os.listdir("src/profiles"):
     try:
@@ -106,38 +113,15 @@ for file in os.listdir("src/profiles"):
         known_person.append(file.replace(".jpg", ""))
         file=os.path.join("src/profiles/", file)
         known_image = face_recognition.load_image_file(file)
-        #print(face_recognition.face_encodings(known_image)[0])
         known_face_encodings.append(face_recognition.face_encodings(known_image)[0])
-        #print(known_face_encodings)
 
     except Exception as e:
         pass
-    
-#print(len(known_face_encodings))
-#print(known_person)
-
-        
-lcd.clear()
 
 while True:
-    	
-    # Grab a single frame of video
     ret, frame = video_capture.read()
-
-    # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-
-    # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
     rgb_small_frame = small_frame[:, :, ::-1]
-
-    new_frame_time = time.time()
-    fps = 1/(new_frame_time-prev_frame_time)
-    prev_frame_time = new_frame_time
-    fps = int(fps)
-    fps = str(fps)
-	#lcd
-    lcd.text(f"FPS : {fps}", 2)
-   # lcd.text("",1)
 
     # Only process every other frame of video to save time
     if process_this_frame:
@@ -156,8 +140,6 @@ while True:
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
             count = count + 1
-            #print(face_encoding)
-            #print(matches)
             
             if count == 3:
                 tDikenal()
@@ -197,7 +179,6 @@ while True:
         cv2.putText(frame, name, (left + 10, bottom - 10), font, 1.0, (0, 0, 0), 1)
 
     font = cv2.FONT_HERSHEY_DUPLEX
-    cv2.putText(frame, fps, (7, 70), font, 3, (232, 230, 230), 3, cv2.LINE_AA)
     # Display the resulting image
     cv2.imshow('Video', frame)
 
