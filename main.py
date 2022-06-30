@@ -1,7 +1,7 @@
 #test lcd
 from rpi_lcd import LCD
+from mail import sendEmail
 import RPi.GPIO as GPIO
-
 import face_recognition
 import cv2
 import numpy as np
@@ -57,62 +57,66 @@ face_names = []
 process_this_frame = True
 
 def benar():
-        time.sleep(0.1)
-        lcd.text("BRANKAS TERBUKA", 1)
-        lcd.text("",2)
-        print("BRANKAS TERBUKA")
-        GPIO.output(relay, 0)
-        GPIO.output(ledGreen, 1)
-        GPIO.output(ledRed, 0)
+    time.sleep(0.1)
+    lcd.text("BRANKAS TERBUKA", 1)
+    lcd.text("", 2)
+    print("BRANKAS TERBUKA")
+    GPIO.output(relay, 0)
+    GPIO.output(ledGreen, 1)
+    GPIO.output(ledRed, 0)
 
-        GPIO.output(buzzer, 1)
-        time.sleep(0.1)
-        GPIO.output(buzzer, 0)
-        time.sleep(0.1)
-        GPIO.output(buzzer, 1)
-        time.sleep(0.3)
-        GPIO.output(buzzer, 0)
+    GPIO.output(buzzer, 1)
+    time.sleep(0.1)
+    GPIO.output(buzzer, 0)
+    time.sleep(0.1)
+    GPIO.output(buzzer, 1)
+    time.sleep(0.3)
+    GPIO.output(buzzer, 0)
 
-        time.sleep(1)
-        lcd.text("'D' UNTUK KUNCI ", 2)
+    time.sleep(1)
+    lcd.text("'D' UNTUK KUNCI ", 2)
 
 
 def pinSalah():   ################
-        lcd.text("    PIN YANG", 1)
-        lcd.text("DIMASUKKAN SALAH", 2)
-        print("PIN SALAH")
-        GPIO.output(relay, 1)
-        GPIO.output(ledGreen, 0)
-        GPIO.output(ledRed, 1)
+    lcd.text("    PIN YANG", 1)
+    lcd.text("DIMASUKKAN SALAH", 2)
+    print("PIN SALAH")
+    GPIO.output(relay, 1)
+    GPIO.output(ledGreen, 0)
+    GPIO.output(ledRed, 1)
 
-        GPIO.output(buzzer, 1)
-        time.sleep(1)
-        GPIO.output(buzzer, 0)
+    GPIO.output(buzzer, 1)
+    time.sleep(1)
+    GPIO.output(buzzer, 0)
 
 def tDikenal():   ################
-        lcd.text("  WAJAH TIDAK", 1)
-        lcd.text("     SESUAI   ", 2)
-        print("WAJAH TIDAK DIKENAL")
-        GPIO.output(relay, 1)
-        GPIO.output(ledGreen, 0)
-        GPIO.output(ledRed, 1)
+    lcd.text("  WAJAH TIDAK", 1)
+    lcd.text("     SESUAI   ", 2)
+    print("WAJAH TIDAK DIKENAL")
+    GPIO.output(relay, 1)
+    GPIO.output(ledGreen, 0)
+    GPIO.output(ledRed, 1)
 
-        GPIO.output(buzzer, 1)
-        time.sleep(1)
-        GPIO.output(buzzer, 0)
+    GPIO.output(buzzer, 1)
+    time.sleep(1)
+    GPIO.output(buzzer, 0)
 
 def noWajah():   ################
-        time.sleep(0.1)
-        lcd.text("  WAJAH TIDAK", 1)
-        lcd.text("   TERDETEKSI   ", 2)
-        print("WAJAH TAK TERDETEKSI")
-        GPIO.output(relay, 1)
-        GPIO.output(ledGreen, 0)
-        GPIO.output(ledRed, 1)
+    time.sleep(0.1)
+    lcd.text("  WAJAH TIDAK", 1)
+    lcd.text("   TERDETEKSI   ", 2)
+    print("WAJAH TAK TERDETEKSI")
+    GPIO.output(relay, 1)
+    GPIO.output(ledGreen, 0)
+    GPIO.output(ledRed, 1)
 
-        GPIO.output(buzzer, 1)
-        time.sleep(1)
-        GPIO.output(buzzer, 0)
+    GPIO.output(buzzer, 1)
+    time.sleep(1)
+    GPIO.output(buzzer, 0)
+
+#def intruder():
+#    cv2.imwrite('src/saved_image/img.jpg', image)
+#    sendEmail('src/saved_image/img.jpg')
 
 
 lcd.text("initializing...", 1)
