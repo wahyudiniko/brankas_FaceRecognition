@@ -14,7 +14,8 @@ ledRed = 23
 ledGreen = 24
 relay = 18
 lcd = LCD()
-count = 0 
+countT = 0 
+countD = 0
 
 #GPIO
 GPIO.setwarnings(False)
@@ -97,13 +98,21 @@ def tDikenal():   ################
         time.sleep(1)
         GPIO.output(buzzer, 0)
 
+def noWajah():   ################
+        lcd.text("  WAJAH TIDAK", 1)
+        lcd.text("   TERDETEKSI   ", 2)
+        GPIO.output(relay, 1)
+        GPIO.output(ledGreen, 0)
+        GPIO.output(ledRed, 1)
+
+        GPIO.output(buzzer, 1)
+        time.sleep(1)
+        GPIO.output(buzzer, 0)
+
 
 lcd.text("initializing...", 1)
 GPIO.output(ledGreen, 1)
 GPIO.output(ledRed, 1)
-
-GPIO.output(ledGreen, 0)
-GPIO.output(ledRed, 0)
 GPIO.output(buzzer, 0)
 
 #Loop to add images in friends folder
@@ -118,11 +127,22 @@ for file in os.listdir("src/profiles"):
     except Exception as e:
         pass
 
+# KEYPAD
+for j in range(4):
+        GPIO.setup(COL[j], GPIO.OUT)
+        GPIO.output(COL[j], 1)
+
+for i in range(4):
+        GPIO.setup(ROW[i], GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
+lcd.text("MASUKKAN PIN: ",1)
+
 while True:
     ret, frame = video_capture.read()
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
     rgb_small_frame = small_frame[:, :, ::-1]
 
+    GPIO.output(relay, 1)
     # Only process every other frame of video to save time
     if process_this_frame:
         # Find all the faces and face encodings in the current frame of video
@@ -130,37 +150,77 @@ while True:
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
         face_names = []
-        GPIO.output(18, 1)
         GPIO.output(ledGreen, 0)
         GPIO.output(ledRed, 0)
-        lcd.text("",1)
-        
+
+	# keypad
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
-            count = count + 1
-            
-            if count == 3:
-                tDikenal()
-                count = 0
+            countT = countT + 1
 
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 name = known_person[best_match_index]
-                Dikenal()
-                count = 0
+                countD = countD + 1
 
             print(name)
-            print(count)
-            lcd.text(f"     {name}    ", 1)
-            
-            #print(face_locations)
+            print(f"dikenal = {countD} tDikenal = {countT}")
             face_names.append(name)
-   
-    process_this_frame = not process_this_frame
+    
+    for j in range(4):
+        GPIO.output(COL[j], 0)
+        for i in range(4):
+             if GPIO.input(ROW[i]) == 0:
+                 passEnter = passEnter + str(MATRIX[i][j])
+                 print(MATRIX[i][j])
+                 GPIO.output(buzzer, 1)
+                 time.sleep(0.1)
+                 GPIO.output(buzzer, 0)
+                 passStars = passStars + "*"
 
+                 if MATRIX[i][j] == "A":
+                     passEnter = ""
+                     passStars = ""
+                 if MATRIX[i][j] == "D":
+                     # wajah dan pin benar
+                     if passEnter == password and countD >= 3:
+                         benar()
+                         pause = True
+                         while pause == True:
+                             if (GPIO.input(ROW[i])) == 0:
+                                 pause = False 
+                                 break
+                             pass
+                         countD = 0
+                     # wajah salah pin benar
+                     if passEnter == password and countT >= 3: 
+                         tDikenal()
+                         countT = 0
+                     # pin salah
+                     if passEnter != password:
+                         pinSalah()
+                     else:
+                         noWajah()
+                        
+                     passEnter = ""
+                     passStars = ""
+                 time.sleep(0.1)
+                 lcd.text("MASUKKAN PIN:",1)
+                 GPIO.output(ledGreen, 0)
+                 GPIO.output(ledRed, 0)
+                 GPIO.output(buzzer, 0)
+
+                 while(GPIO.input(ROW[i])) == 0:
+                     pass
+
+        time.sleep(0.01)
+        lcd.text(passStars, 2)
+        GPIO.output(COL[j],1)
+
+    process_this_frame = not process_this_frame
 
     # Display the results
     for (top, right, bottom, left), name in zip(face_locations, face_names):
