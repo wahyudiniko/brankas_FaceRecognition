@@ -34,7 +34,7 @@ MATRIX = [ [1, 2, 3, "A"],
 ROW = [5, 6, 13, 19]
 COL = [16, 20, 21, 12]
 
-password = "1D"
+password = "134590D"
 passEnter = ""
 passStars = ""
 
@@ -60,6 +60,7 @@ def benar():
         time.sleep(0.1)
         lcd.text("BRANKAS TERBUKA", 1)
         lcd.text("",2)
+        print("BRANKAS TERBUKA")
         GPIO.output(relay, 0)
         GPIO.output(ledGreen, 1)
         GPIO.output(ledRed, 0)
@@ -79,6 +80,7 @@ def benar():
 def pinSalah():   ################
         lcd.text("    PIN YANG", 1)
         lcd.text("DIMASUKKAN SALAH", 2)
+        print("PIN SALAH")
         GPIO.output(relay, 1)
         GPIO.output(ledGreen, 0)
         GPIO.output(ledRed, 1)
@@ -90,6 +92,7 @@ def pinSalah():   ################
 def tDikenal():   ################
         lcd.text("  WAJAH TIDAK", 1)
         lcd.text("     SESUAI   ", 2)
+        print("WAJAH TIDAK DIKENAL")
         GPIO.output(relay, 1)
         GPIO.output(ledGreen, 0)
         GPIO.output(ledRed, 1)
@@ -99,8 +102,10 @@ def tDikenal():   ################
         GPIO.output(buzzer, 0)
 
 def noWajah():   ################
+        time.sleep(0.1)
         lcd.text("  WAJAH TIDAK", 1)
         lcd.text("   TERDETEKSI   ", 2)
+        print("WAJAH TAK TERDETEKSI")
         GPIO.output(relay, 1)
         GPIO.output(ledGreen, 0)
         GPIO.output(ledRed, 1)
@@ -141,7 +146,9 @@ while True:
     ret, frame = video_capture.read()
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
     rgb_small_frame = small_frame[:, :, ::-1]
-
+    
+    if countD > 0:
+        countD = countD - 1
     GPIO.output(relay, 1)
     # Only process every other frame of video to save time
     if process_this_frame:
@@ -164,7 +171,8 @@ while True:
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 name = known_person[best_match_index]
-                countD = countD + 1
+                countD = countD + 3
+                countT = 0
 
             print(name)
             print(f"dikenal = {countD} tDikenal = {countT}")
@@ -186,24 +194,26 @@ while True:
                      passStars = ""
                  if MATRIX[i][j] == "D":
                      # wajah dan pin benar
-                     if passEnter == password and countD >= 3:
-                         benar()
-                         pause = True
-                         while pause == True:
-                             if (GPIO.input(ROW[i])) == 0:
-                                 pause = False 
-                                 break
-                             pass
-                         countD = 0
+                     if passEnter == password:
+                         if countD >= 2 and countT == 0:
+                             benar()
+                             pause = True
+                             while pause == True:
+                                 if (GPIO.input(ROW[i])) == 0:
+                                     pause = False 
+                                     countD = 3
+                                     break
+                                 pass
+                         if countT == 0 and countD <= 2:
+                             noWajah()
                      # wajah salah pin benar
-                     if passEnter == password and countT >= 3: 
+                     if passEnter == password and countT >= 2: 
                          tDikenal()
                          countT = 0
                      # pin salah
                      if passEnter != password:
                          pinSalah()
-                     else:
-                         noWajah()
+                     
                         
                      passEnter = ""
                      passStars = ""
