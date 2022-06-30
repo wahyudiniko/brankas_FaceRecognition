@@ -17,7 +17,7 @@ lcd = LCD()
 countT = 0 
 countD = 0
 
-#GPIO
+# GPIO
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(buzzer, GPIO.OUT)
@@ -34,7 +34,7 @@ MATRIX = [ [1, 2, 3, "A"],
 ROW = [5, 6, 13, 19]
 COL = [16, 20, 21, 12]
 
-password = "134590D"
+password = "1810D"
 passEnter = ""
 passStars = ""
 
@@ -44,17 +44,23 @@ passStars = ""
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
 
-#LCD object
+# LCD object
 lcd = LCD()
-#Store objects in array
-known_person=[] #Name of person string
-known_image=[] #Image object
-known_face_encodings=[] #Encoding object
-#Initialize some variables
+
+# Store objects in array
+known_person=[] # Name of person string
+known_image=[] # Image object
+known_face_encodings=[] # Encoding object
+
+# Initialize some lists
 face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
+
+def kirimWajah():
+    cv2.imwrite('src/saved_image/img.jpg', frame)
+    sendEmail('src/saved_image/img.jpg')
 
 def benar():
     time.sleep(0.1)
@@ -113,10 +119,6 @@ def noWajah():   ################
     GPIO.output(buzzer, 1)
     time.sleep(1)
     GPIO.output(buzzer, 0)
-
-#def intruder():
-#    cv2.imwrite('src/saved_image/img.jpg', image)
-#    sendEmail('src/saved_image/img.jpg')
 
 
 lcd.text("initializing...", 1)
@@ -214,6 +216,7 @@ while True:
                      if passEnter == password and countT >= 2: 
                          tDikenal()
                          countT = 0
+                         kirimWajah()
                      # pin salah
                      if passEnter != password:
                          pinSalah()
