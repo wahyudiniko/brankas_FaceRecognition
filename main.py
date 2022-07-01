@@ -13,9 +13,9 @@ buzzer = 4
 ledRed = 23
 ledGreen = 24
 relay = 18
-lcd = LCD()
-countT = 0 
+countT = 0
 countD = 0
+countSalah = 0
 
 # GPIO
 GPIO.setwarnings(False)
@@ -220,7 +220,10 @@ while True:
                      # pin salah
                      if passEnter != password:
                          pinSalah()
-                     
+                         countSalah = countSalah + 1
+                         if countSalah == 3:
+                             kirimWajah()
+                             countSalah = 0
                         
                      passEnter = ""
                      passStars = ""
