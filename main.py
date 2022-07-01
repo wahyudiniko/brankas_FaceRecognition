@@ -58,6 +58,8 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
+GPIO.output(relay, 1)
+
 def kirimWajah():
     cv2.imwrite('src/saved_image/img.jpg', frame)
     sendEmail('src/saved_image/img.jpg')
@@ -125,7 +127,6 @@ lcd.text("initializing...", 1)
 GPIO.output(ledGreen, 1)
 GPIO.output(ledRed, 1)
 GPIO.output(buzzer, 0)
-GPIO.output(relay, 1))
 
 #Loop to add images in friends folder
 for file in os.listdir("src/profiles"):
