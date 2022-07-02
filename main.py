@@ -62,7 +62,20 @@ GPIO.output(relay, 1)
 
 def kirimWajah():
     cv2.imwrite('src/saved_image/img.jpg', frame)
-    sendEmail('src/saved_image/img.jpg')
+    try:
+                  ################
+        lcd.text("    MENGIRIM", 1)
+        lcd.text("TANGKAPAN WAJAH", 2)
+        time.sleep(0.5)
+        sendEmail('src/saved_image/img.jpg')
+    except:
+        print("GAGAL KIRIM TANGKAPAN WAJAH")
+                  ################
+        lcd.text("  GAGAL KIRIM", 1)
+        lcd.text("TANGKAPAN WAJAH", 2)
+        GPIO.output(buzzer, 1)
+        GPIO.output(ledRed, 1)
+        time.sleep(1)
 
 def benar():
     time.sleep(0.1)
@@ -208,14 +221,15 @@ while True:
                              pause = True
                              while pause == True:
                                  if (GPIO.input(ROW[i])) == 0:
-                                     pause = False 
+                                     pause = False
                                      countD = 3
+                                     countSalah = 0
                                      break
                                  pass
                          if countT == 0 and countD <= 2:
                              noWajah()
                      # wajah salah pin benar
-                     if passEnter == password and countT >= 2: 
+                     if passEnter == password and countT >= 2:
                          tDikenal()
                          countT = 0
                          kirimWajah()
@@ -226,7 +240,6 @@ while True:
                          if countSalah == 3:
                              kirimWajah()
                              countSalah = 0
-                        
                      passEnter = ""
                      passStars = ""
                  time.sleep(0.1)
