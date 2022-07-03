@@ -16,6 +16,7 @@ relay = 18
 countT = 0
 countD = 0
 countSalah = 0
+countNoWajah = 0
 
 # GPIO
 GPIO.setwarnings(False)
@@ -228,6 +229,10 @@ while True:
                                  pass
                          if countT == 0 and countD <= 2:
                              noWajah()
+                             countNoWajah = countNoWajah + 1
+                             if countNoWajah == 3:
+                                 kirimWajah()
+                                 countNoWajah = 0
                      # wajah salah pin benar
                      if passEnter == password and countT >= 2:
                          tDikenal()
