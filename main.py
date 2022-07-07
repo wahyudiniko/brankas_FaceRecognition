@@ -8,7 +8,6 @@ import numpy as np
 import os
 import time
 
-
 buzzer = 4
 ledRed = 23
 ledGreen = 24
@@ -41,7 +40,6 @@ passStars = ""
 
 # Note: This script requires OpenCV (the `cv2` library) to be installed only to read from your webcam.
 # Visit smartbuids.io for more information
-
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
 
@@ -53,7 +51,7 @@ known_person=[] # Name of person string
 known_image=[] # Image object
 known_face_encodings=[] # Encoding object
 
-# Initialize some lists
+# Initialize face lists
 face_locations = []
 face_encodings = []
 face_names = []
@@ -177,12 +175,10 @@ while True:
         # Find all the faces and face encodings in the current frame of video
         face_locations = face_recognition.face_locations(rgb_small_frame)
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
-
         face_names = []
         GPIO.output(ledGreen, 0)
         GPIO.output(ledRed, 0)
 
-	# keypad
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
@@ -199,7 +195,8 @@ while True:
             print(name)
             print(f"dikenal = {countD} tDikenal = {countT}")
             face_names.append(name)
-    
+
+    # KEYPAD
     for j in range(4):
         GPIO.output(COL[j], 0)
         for i in range(4):
