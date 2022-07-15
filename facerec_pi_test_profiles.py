@@ -4,31 +4,11 @@
 #code of the orginal Ageitgey (GitHub) face recognition demo to include multiple faces.
 #Simply add the your desired 'passport-style' face to the 'profiles' folder.
 
-#test lcd
-from rpi_lcd import LCD
-import RPi.GPIO as GPIO
-
 import face_recognition
 import cv2
 import numpy as np
 import os
 import time
-
-
-buzzer = 4
-ledRed = 23
-ledGreen = 24
-relay = 18
-lcd = LCD()
-count = 0 
-
-#GPIO
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(buzzer, GPIO.OUT)
-GPIO.setup(ledRed, GPIO.OUT)
-GPIO.setup(ledGreen, GPIO.OUT)
-GPIO.setup(relay, GPIO.OUT)
 
 # Note: This script requires OpenCV (the `cv2` library) to be installed only to read from your webcam.
 # Visit smartbuids.io for more information
@@ -36,8 +16,6 @@ GPIO.setup(relay, GPIO.OUT)
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
 
-#LCD object
-lcd = LCD()
 #Store objects in array
 known_person=[] #Name of person string
 known_image=[] #Image object
@@ -49,27 +27,8 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
-prev_frame_time = 0
-new_frame_time = 0
-
-def Dikenal():
-	GPIO.output(relay, 0)
-	GPIO.output(ledGreen, 1)
-	GPIO.output(ledRed, 0)
-	#time.sleep(3)
-
-def tDikenal():
-        GPIO.output(relay, 1)
-        GPIO.output(ledGreen, 0)
-        GPIO.output(ledRed, 1)
-        GPIO.output(buzzer, 1)
-        time.sleep(1)
-        GPIO.output(buzzer, 0)
-
-
-lcd.text("initializing...", 1)
-GPIO.output(ledGreen, 1)
-GPIO.output(ledRed, 1)
+#prev_frame_time = 0
+#new_frame_time = 0
 
 #Loop to add images in friends folder
 for file in os.listdir("src/profiles"):
@@ -89,10 +48,9 @@ for file in os.listdir("src/profiles"):
 #print(known_person)
 
         
-lcd.clear()
+
 
 while True:
-    	
     # Grab a single frame of video
     ret, frame = video_capture.read()
 
@@ -101,15 +59,13 @@ while True:
 
     # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
     rgb_small_frame = small_frame[:, :, ::-1]
-
-    new_frame_time = time.time()
-    fps = 1/(new_frame_time-prev_frame_time)
-    prev_frame_time = new_frame_time
-    fps = int(fps)
-    fps = str(fps)
-	#lcd
-    lcd.text(f"FPS : {fps}", 2)
-   # lcd.text("",1)
+    
+    #FPS
+    #new_frame_time = time.time()
+    #fps = 1/(new_frame_time-prev_frame_time)
+    #prev_frame_time = new_frame_time
+    #fps = int(fps)
+    #fps = str(fps)
 
     # Only process every other frame of video to save time
     if process_this_frame:
@@ -118,37 +74,23 @@ while True:
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
         face_names = []
-        GPIO.output(18, 1)
-        GPIO.output(ledGreen, 0)
-        GPIO.output(ledRed, 0)
-        lcd.text("",1)
-        
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
-            count = count + 1
+            
             #print(face_encoding)
             #print(matches)
-            
-            if count == 3:
-                tDikenal()
-                count = 0
 
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 name = known_person[best_match_index]
-                Dikenal()
-                count = 0
 
-            print(name)
-            print(count)
-            lcd.text(f"     {name}    ", 1)
-            
+            #print(name)
             #print(face_locations)
             face_names.append(name)
-   
+
     process_this_frame = not process_this_frame
 
 
@@ -159,6 +101,9 @@ while True:
         right *= 4
         bottom *= 4
         left *= 4
+    
+
+
 
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), (255, 255, 255), 2)
@@ -169,7 +114,7 @@ while True:
         cv2.putText(frame, name, (left + 10, bottom - 10), font, 1.0, (0, 0, 0), 1)
 
     font = cv2.FONT_HERSHEY_DUPLEX
-    cv2.putText(frame, fps, (7, 70), font, 3, (232, 230, 230), 3, cv2.LINE_AA)
+    #cv2.putText(frame, fps, (7, 70), font, 3, (232, 230, 230), 3, cv2.LINE_AA)
     # Display the resulting image
     cv2.imshow('Video', frame)
 
@@ -180,5 +125,3 @@ while True:
 # Release handle to the webcam
 video_capture.release()
 cv2.destroyAllWindows()
-GPIO.cleanup()
-lcd.clear()
