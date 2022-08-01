@@ -1,4 +1,5 @@
-#test lcd
+#!/usr/bin/python3
+
 from rpi_lcd import LCD
 from mail import sendEmail
 import RPi.GPIO as GPIO
