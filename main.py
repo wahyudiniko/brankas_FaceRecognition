@@ -26,6 +26,8 @@ GPIO.setup(ledRed, GPIO.OUT)
 GPIO.setup(ledGreen, GPIO.OUT)
 GPIO.setup(relay, GPIO.OUT)
 
+GPIO.output(relay, 1)
+
 # keypad matrix
 MATRIX = [ [1, 2, 3, "A"],
            [4, 5, 6, "B"],
@@ -58,7 +60,6 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
-GPIO.output(relay, 1)
 
 def kirimWajah():
     cv2.imwrite('src/saved_image/img.jpg', frame)
@@ -278,7 +279,7 @@ while True:
 
     font = cv2.FONT_HERSHEY_DUPLEX
     # Display the resulting image
-    cv2.imshow('Video', frame)
+    #cv2.imshow('Video', frame)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
